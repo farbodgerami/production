@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-# dog
+ 
 urlpatterns = [
     path("UserlistByAdmin/", views.UserlistByAdmin.as_view(), name="users"),
     path("UserdetailByadmin/<int:id>/", views.UserdetailByadmin.as_view(), name="usersprofile"),
