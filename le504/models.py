@@ -28,57 +28,42 @@ class Word(models.Model):
  
 
 class Levelstring(models.Model):
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    user=models.ForeignKey(User,on_delete=models.CASCADE,related_name='levelstring5')
     level=models.TextField(default="{}",blank=False,null=False)
+     
 
-def createlevelarraydependonuser(sender,**kwargs):
-    words=Word.objects.all()
-    a={}
- 
-    if kwargs['created']:      
-        for i in words:
-             a.update({i.id: 1})
-        levelstring=Levelstring()
-        levelstring.user=kwargs['instance']
-        levelstring.level=json.dumps(a)
-        levelstring.save()
-post_save.connect(createlevelarraydependonuser,sender=User)
+def createlevelarraydependonuserprofile(sender,**kwargs):
+    # trycathch vase ine ke age levelstring vojood dasht dastesh nazan. agara vojood nadasht yeki jadid besaz
+    try:
+        userlevelstring=Levelstring.objects.get(user_id=kwargs['instance'].user.id)
+     
+    except:
+        words=Word.objects.all()
+        a={}
+        userplanarray=kwargs['instance'].userplan.split(' ')
+        if 'le504' in userplanarray:    
+            for i in words:
+                a.update({i.id:{i.id: 1,"num":0}})
+            levelstring=Levelstring()
+            levelstring.user=kwargs['instance'].user
+            levelstring.level=json.dumps(a)
+            levelstring.save()
+post_save.connect(createlevelarraydependonuserprofile,sender=Userprofile)
 
- 
+  
 
 def createlevelarraydependonword(sender,**kwargs):
-    users=User.objects.all()
-    
+    levelstrings=Levelstring.objects.all()
     if kwargs['created']:      
-        for i in users:        
-            userlevelstring=Levelstring.objects.get(user_id=i.id)
-            # string to json
-            res = json.loads(userlevelstring.level)
-            res.update({kwargs['instance'].id: 1})
+        for i in levelstrings:        
+            res = json.loads(i.level)
+            res.update({kwargs['instance'].id:{kwargs['instance'].id: 1,"num":0}})
             # json to string
-            userlevelstring.level = json.dumps(res)
-            userlevelstring.save()
-            
+            i.level = json.dumps(res)
+            i.save() 
 post_save.connect(createlevelarraydependonword,sender=Word)
 
-# def createlevelarraydependonuser(sender,**kwargs):
-#     words1100=Word1100.objects.all()
-#     if kwargs['created']:      
-#         Level1100.objects.bulk_create([Level1100(user1100=kwargs['instance'],word1100=i) for i in words1100 ])
-# post_save.connect(createlevelarraydependonuser,sender=User1100)
  
-# def createlevelarraydependonword(sender,**kwargs):
-#     users1100=User1100.objects.all()
-#     if kwargs['created']:      
-#         Level1100.objects.bulk_create([Level1100(word1100=kwargs['instance'],user1100=i) for i in users1100 ])
-# post_save.connect(createlevelarraydependonword,sender=Word1100)
-
-# ba zadane yek dokme dar react n ta kalame be n ta user ezafe mishe:
-# def createlevelarraydependonuser(sender,**kwargs):
-#     users=[userr1,userr2,...]
-#     for userr in users:
-#         words=[word1,word2,...]
-#         Level.objects.bulk_create([Level(user=userr,word=i) for i in words ])
  
  
 

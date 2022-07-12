@@ -55,12 +55,10 @@ from django.utils import timezone
 class Userprofile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
     phonenumber=models.IntegerField(blank=True,null=True)
-    userplan=models.CharField(max_length=1,default='A')
+    userplan=models.CharField(blank=True,max_length=255)
     paiduntil = models.DateField(null=True, blank=True)
     paid=models.DateTimeField(null=True, blank=True)
-    # create = models.DateTimeField(auto_now_add=True)
-    # update = models.DateTimeField(auto_now=True)
-    
+ 
     def __str__(self):
         return self.user.username 
 
@@ -78,6 +76,8 @@ class Userprofile(models.Model):
         if self.paiduntil is None:
             return False
         return currentdate < self.paiduntil
+
+ 
 
     # def setpaiduntiltime(self,dateortimestamp):
     #     if isinstance(dateortimestamp,int):

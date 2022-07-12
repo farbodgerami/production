@@ -143,18 +143,30 @@ ZP_API_STARTPAY = "https://www.zarinpal.com/pg/StartPay/{authority}"
  
 CallbackURL = 'http://127.0.0.1:8000/verify/'
 
-def send_request(request,plan,price):
+def send_request(request,sendedplan,price):
    
     global planvaset,pricevaset
-
+    sendedplanarray=sendedplan.split(',')
+    planvaset=sendedplanarray
+    pricevaset=price
     try: uservaset
     except: return HttpResponse("اول باید ثبت نام کنید و سپس وارد شوید")
-
-    acceptedplans=['A','B','C','D','E','F']
-    if plan not in acceptedplans:
-            return HttpResponse("not in accepted plans")
-    planvaset=plan
+     
+ 
+    acceptedplans=['lebarrens','lecollins','le504','le800','le3500','le1100']
+    for i in sendedplanarray:
+      if i not in acceptedplans:
+        return HttpResponse("not in accepted plans")
+    planvaset=sendedplanarray
     pricevaset=price
+    # # kar roo zaman
+    # currentdate=datetime.date.today()         
+    # _30days=timedelta(days=1)
+    # paiduntil=currentdate +_30days
+    # userprofile=Userprofile.objects.get(user=uservaset)
+    # userprofile.setpaiduntil(paiduntil) 
+    # return HttpResponse(f"{userprofile.paiduntil} va {userprofile.haspaid()}")   
+   
     req_data = {
         "merchant_id": MERCHANT,
         "amount": price,
@@ -176,12 +188,8 @@ def send_request(request,plan,price):
         e_message = req.json()['errors']['message']
    
         return HttpResponse(f"Error code: {e_code}, Error Message: {e_message}")
-
-# def send_request(request,yechi):
-#     try:
-#         acceptedplans=['A','B','C','D','E','F']
-#         if yechi not in acceptedplans:
-#                 return HttpResponse("not in accepted plans")
+############################################################################################
+ 
        
 
 
@@ -195,13 +203,7 @@ def send_request(request,plan,price):
 #         if userprofile.userplan != yechi:
 #             # dar inja bayad tafavote gheimat mohasebe beshe va az plane feli kam beshe ve be dargahe pardakht ferestade beshe
 #             userprofile.userplan=yechi
-       
-    
-#         userprofile.save()
-    
-#         return HttpResponse(f"javcab: {userprofile.userplan} va {userprofile.haspaidtime()} va {userprofile.paiduntil} va {userprofile.username}")
-#     except:
-#         return HttpResponse("اول باید ثبت نام کنید و سپس وارد شوید")
+ 
 def verify(request):
     t_status = request.GET.get('Status')
     t_authority = request.GET['Authority']
@@ -217,12 +219,21 @@ def verify(request):
         if len(req.json()['errors']) == 0:
             t_status = req.json()['data']['code']
             if t_status == 100:
+                # modiriate planha:
+                userprofile=Userprofile.objects.get(user=uservaset)
+                userplanarray=userprofile.userplan.split(' ')
+                for i in planvaset:
+                    if i not in userplanarray:
+                        userplanarray.append(i)
+                listToStr = ' '.join([str(elem) for elem in userplanarray])
+                userprofile.userplan=listToStr
+                # ezafe kardane etebar:
                 currentdate=datetime.date.today()         
                 _30days=timedelta(days=30)
                 paiduntil=currentdate +_30days
                 userprofile=Userprofile.objects.get(user=uservaset)
                 userprofile.setpaiduntil(paiduntil)
-                userprofile.userplan=planvaset
+                 
                 userprofile.save()
                 return HttpResponse('Transaction success.\nRefID: ' + str(
                     req.json()['data']['ref_id']

@@ -44,6 +44,7 @@ class Userprofileserializerwithtoken(serializers.ModelSerializer):
     email=serializers.SerializerMethodField(read_only=True)
     isadmin=serializers.SerializerMethodField(read_only=True)
     haspaid=serializers.SerializerMethodField(read_only=True)
+    userplan=serializers.SerializerMethodField(read_only=True)
     class Meta:
         model=Userprofile
         fields=['id','username','email','phonenumber','isadmin','token','userplan','paiduntil','paid','haspaid']
@@ -53,6 +54,8 @@ class Userprofileserializerwithtoken(serializers.ModelSerializer):
         return str(token)
     def get_username(self,obj):
         return obj.user.username
+    def get_userplan(self,obj):
+        return obj.userplan.split(' ')
     def get_email(self,obj):
         return obj.user.email
     def get_isadmin(self,obj):
