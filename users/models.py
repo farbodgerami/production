@@ -28,7 +28,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     username=models.CharField(max_length=50,unique=True)
-    email=models.EmailField(unique=True)
+    email=models.EmailField(unique=True,max_length=50)
     is_active=models.BooleanField(default=True)
     is_admin=models.BooleanField(default=False)
     is_superuser=models.BooleanField(default=False)
@@ -54,7 +54,7 @@ from django.utils import timezone
 
 class Userprofile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
-    phonenumber=models.IntegerField(blank=True,null=True)
+    phonenumber=models.IntegerField(blank=True,null=True ,max_length=10)
     userplan=models.CharField(blank=True,max_length=255)
     paiduntil = models.DateField(null=True, blank=True)
     paid=models.DateTimeField(null=True, blank=True)
