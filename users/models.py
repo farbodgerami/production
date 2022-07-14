@@ -54,7 +54,7 @@ from django.utils import timezone
 
 class Userprofile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
-    phonenumber=models.IntegerField(blank=True,null=True ,max_length=10)
+    phonenumber=models.IntegerField(blank=True,null=True )
     userplan=models.CharField(blank=True,max_length=255)
     paiduntil = models.DateField(null=True, blank=True)
     paid=models.DateTimeField(null=True, blank=True)
