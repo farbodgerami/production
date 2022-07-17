@@ -141,7 +141,7 @@ ZP_API_STARTPAY = "https://www.zarinpal.com/pg/StartPay/{authority}"
  
 
  
-CallbackURL = 'http://127.0.0.1:8000/verify/'
+CallbackURL = 'https://fbgerami.ir/verify/'
 
 def send_request(request,sendedplan,price):
    
@@ -172,7 +172,7 @@ def send_request(request,sendedplan,price):
         "amount": price,
         "callback_url": CallbackURL,
         "description": 'خرید پلن ها',
-        "metadata": {"mobile": userpvaset.phonenumber, "email": uservaset.email}
+       "metadata": {"mobile":str(userpvaset.phonenumber), "email": uservaset.email}
     }
     req_header = {"accept": "application/json",
                   "content-type": "application/json'"}
