@@ -141,7 +141,7 @@ ZP_API_STARTPAY = "https://www.zarinpal.com/pg/StartPay/{authority}"
  
 
  
-CallbackURL = 'https://fbgerami.ir/verify/'
+CallbackURL = 'https://fbgerami.ir/api/users/verify/'
 
 def send_request(request,sendedplan,price):
    
@@ -159,14 +159,7 @@ def send_request(request,sendedplan,price):
         return HttpResponse("not in accepted plans")
     planvaset=sendedplanarray
     pricevaset=price
-    # # kar roo zaman
-    # currentdate=datetime.date.today()         
-    # _30days=timedelta(days=1)
-    # paiduntil=currentdate +_30days
-    # userprofile=Userprofile.objects.get(user=uservaset)
-    # userprofile.setpaiduntil(paiduntil) 
-    # return HttpResponse(f"{userprofile.paiduntil} va {userprofile.haspaid()}")   
-   
+ 
     req_data = {
         "merchant_id": MERCHANT,
         "amount": price,
@@ -188,22 +181,8 @@ def send_request(request,sendedplan,price):
         e_message = req.json()['errors']['message']
    
         return HttpResponse(f"Error code: {e_code}, Error Message: {e_message}")
-############################################################################################
- 
-       
 
 
-#         # currentdate=datetime.datetime.now()  
-#         currentdate = timezone.now()       
-#         _30days=timedelta(seconds=10)
-#         paiduntil=currentdate +_30days
-#         userprofile=Userprofile.objects.get(user=uservaset)
-
-#         userprofile.setpaiduntiltime(paiduntil)
-#         if userprofile.userplan != yechi:
-#             # dar inja bayad tafavote gheimat mohasebe beshe va az plane feli kam beshe ve be dargahe pardakht ferestade beshe
-#             userprofile.userplan=yechi
- 
 def verify(request):
     t_status = request.GET.get('Status')
     t_authority = request.GET['Authority']
