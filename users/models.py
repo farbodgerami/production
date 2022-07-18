@@ -57,6 +57,7 @@ class Userprofile(models.Model):
     phonenumber=models.IntegerField(blank=True,null=True)
     userplan=models.CharField(blank=True,max_length=255)
     paiduntil = models.DateField(null=True, blank=True)
+    userplanindu=models.CharField(blank=True,max_length=255)
      
  
     def __str__(self):
