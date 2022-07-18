@@ -67,7 +67,9 @@ class UserregisterByuser(APIView):
             user = User.objects.create(username=data['username'],
                                             email=data['email'],
                                             password=make_password(data['password']))
-            serializer = Userserializerwithtoken(user, many=False)
+            userprofile=Userprofile.objects.get(user_id=user.id)
+            serializer = Userprofileserializerwithtoken(userprofile, many=False)
+             
             return Response(serializer.data)
         except:
             message = {'detail': 'user with this detail already exists'}
@@ -82,7 +84,8 @@ class UserdetailByuser(APIView):
     def put(self,request):
         user = request.user
         # chon mikhaim ke tokene jadid ro ham besaze darim:
-        serializer = Userserializerwithtoken(user, many=False)
+        userprofile=Userprofile.objects.get(user_id=user.id)
+        serializer = Userprofileserializerwithtoken(userprofile, many=False)
         data = request.data
      
         user.username = data['username']
@@ -98,7 +101,7 @@ class UserdetailByuser(APIView):
 
 @api_view(['POST'])
 def loginman(request):
-    global uservaset,userpvaset
+     
     from django.contrib.auth import authenticate   
     data = request.data
  
@@ -116,8 +119,8 @@ def loginman(request):
         serializer = Userprofileserializerwithtoken(userprofile, many=False)
         if user is None:
                 raise Exception()
-        uservaset=user
-        userpvaset=userprofile
+        login(request,user)
+        
        
         return Response(serializer.data)
     except:
@@ -125,6 +128,16 @@ def loginman(request):
         return Response(message, status=status.HTTP_404_NOT_FOUND)
 
 
+
+# @permission_classes([IsAuthenticated])
+# @api_view(['POST'])
+def logoutview(request):
+ 
+    logout(request)
+   
+    return HttpResponse('loggedout')
+         
+        
 from django.http import HttpResponse
 from django.shortcuts import redirect
 # import requests
@@ -139,38 +152,38 @@ ZP_API_VERIFY = "https://api.zarinpal.com/pg/v4/payment/verify.json"
 ZP_API_STARTPAY = "https://www.zarinpal.com/pg/StartPay/{authority}"
 
  
-
- 
 CallbackURL = 'https://fbgerami.ir/api/users/verify/'
 
 def send_request(request,sendedplan,price):
-   
-    global planvaset,pricevaset
-    sendedplanarray=sendedplan.split(',')
-    planvaset=sendedplanarray
+    print(request.user.id)
+    # return HttpResponse(uservaset.username )
+    global pricevaset
     pricevaset=price
-    try: uservaset
-    except: return HttpResponse("اول باید ثبت نام کنید و سپس وارد شوید")
-     
- 
+
+    if request.user.id is None:
+      return HttpResponse("اول باید ثبت نام کنید و سپس وارد شوید")
+    sendedplanarray=sendedplan.split(',')
     acceptedplans=['lebarrens','lecollins','le504','le800','le3500','le1100']
     for i in sendedplanarray:
       if i not in acceptedplans:
         return HttpResponse("not in accepted plans")
-    planvaset=sendedplanarray
-    pricevaset=price
+    userprofile=Userprofile.objects.get(user_id=request.user.id)
+    userprofile.userplanindu=sendedplan
+    userprofile.save()
+
+ 
  
     req_data = {
         "merchant_id": MERCHANT,
         "amount": price,
         "callback_url": CallbackURL,
         "description": 'خرید پلن ها',
-       "metadata": {"mobile":str(userpvaset.phonenumber), "email": uservaset.email}
+       "metadata": {"mobile":str(userprofile.phonenumber), "email": userprofile.user.email}
     }
     req_header = {"accept": "application/json",
                   "content-type": "application/json'"}
     req = pip._vendor.requests.post(url=ZP_API_REQUEST, data=json.dumps(req_data), headers=req_header)
-     
+ 
     authority = req.json()['data']['authority']
    
     if len(req.json()['errors']) == 0:
@@ -196,12 +209,15 @@ def verify(request):
         }
         req = pip._vendor.requests.post(url=ZP_API_VERIFY, data=json.dumps(req_data), headers=req_header)
         if len(req.json()['errors']) == 0:
+         
             t_status = req.json()['data']['code']
             if t_status == 100:
                 # modiriate planha:
-                userprofile=Userprofile.objects.get(user=uservaset)
+                userprofile=Userprofile.objects.get(user_id=request.user.id)
+                userplanindui=userprofile.userplanindu
+                userplandinduarray=userplanindui.split(',')
                 userplanarray=userprofile.userplan.split(' ')
-                for i in planvaset:
+                for i in userplandinduarray:
                     if i not in userplanarray:
                         userplanarray.append(i)
                 listToStr = ' '.join([str(elem) for elem in userplanarray])
@@ -210,7 +226,7 @@ def verify(request):
                 currentdate=datetime.date.today()         
                 _30days=timedelta(days=30)
                 paiduntil=currentdate +_30days
-                userprofile=Userprofile.objects.get(user=uservaset)
+                 
                 userprofile.setpaiduntil(paiduntil)
                  
                 userprofile.save()

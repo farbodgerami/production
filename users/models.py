@@ -57,7 +57,7 @@ class Userprofile(models.Model):
     phonenumber=models.IntegerField(blank=True,null=True )
     userplan=models.CharField(blank=True,max_length=255)
     paiduntil = models.DateField(null=True, blank=True)
-    paid=models.DateTimeField(null=True, blank=True)
+   
  
     def __str__(self):
         return self.user.username 
@@ -76,31 +76,7 @@ class Userprofile(models.Model):
         if self.paiduntil is None:
             return False
         return currentdate < self.paiduntil
-
- 
-
-    # def setpaiduntiltime(self,dateortimestamp):
-    #     if isinstance(dateortimestamp,int):
-    #         paid=datetime.datetime.fromtimestamp(dateortimestamp)
-    #     elif isinstance(dateortimestamp,str):
-    #         paid=datetime.datetime.fromtimestamp(int(dateortimestamp))
-    #     else:
-    #      paid=dateortimestamp
-    #      self.paid=paid
-       
-    #     self.save()
-
-
-    # def haspaidtime(self, currentdate=datetime.datetime.now()):
-    #     if self.paiduntil is None:
-    #         return False
-    #     now = timezone.now()
-
-    
-    #     print(now.time())
-    #     print(self.paid.time())
-    #     return now.time() < self.paid.time() 
-
+        
 
 
 

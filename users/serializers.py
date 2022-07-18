@@ -47,7 +47,7 @@ class Userprofileserializerwithtoken(serializers.ModelSerializer):
     userplan=serializers.SerializerMethodField(read_only=True)
     class Meta:
         model=Userprofile
-        fields=['id','username','email','phonenumber','isadmin','token','userplan','paiduntil','paid','haspaid']
+        fields=['id','username','email','phonenumber','isadmin','token','userplan','paiduntil','haspaid']
 
     def get_token(self,obj):
         token=AccessToken.for_user(obj.user)
