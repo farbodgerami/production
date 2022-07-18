@@ -28,7 +28,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     username=models.CharField(max_length=50,unique=True)
-    email=models.EmailField(unique=True,max_length=50)
+    email=models.EmailField(unique=True)
     is_active=models.BooleanField(default=True)
     is_admin=models.BooleanField(default=False)
     is_superuser=models.BooleanField(default=False)
@@ -39,7 +39,7 @@ class User(AbstractBaseUser):
    
     objects=UserManager()
     def __str__(self):
-        return self.email
+        return self.username
 
     def has_perm(self,perm,obj=None):
         return True
@@ -54,10 +54,10 @@ from django.utils import timezone
 
 class Userprofile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
-    phonenumber=models.IntegerField(blank=True,null=True )
+    phonenumber=models.IntegerField(blank=True,null=True)
     userplan=models.CharField(blank=True,max_length=255)
     paiduntil = models.DateField(null=True, blank=True)
-   
+     
  
     def __str__(self):
         return self.user.username 
@@ -76,7 +76,9 @@ class Userprofile(models.Model):
         if self.paiduntil is None:
             return False
         return currentdate < self.paiduntil
-        
+
+
+
 
 
 
