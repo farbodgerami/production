@@ -8,3 +8,5 @@ admin.site.register(User,levelsr)
 class userprofile(admin.ModelAdmin):
     list_display=['id','user','phonenumber' ]
 admin.site.register(Userprofile,userprofile)
+
+ 

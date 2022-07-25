@@ -69,7 +69,7 @@ class UserregisterByuser(APIView):
                                             password=make_password(data['password']))
             userprofile=Userprofile.objects.get(user_id=user.id)
             serializer = Userprofileserializerwithtoken(userprofile, many=False)
-             
+            login(request,user)  
             return Response(serializer.data)
         except:
             message = {'detail': 'user with this detail already exists'}
