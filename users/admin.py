@@ -6,7 +6,7 @@ class levelsr(admin.ModelAdmin):
 admin.site.register(User,levelsr)
 
 class userprofile(admin.ModelAdmin):
-    list_display=['id','user','phonenumber' ]
+    list_display=['id','user','phonenumber','userplan','paiduntil' ]
 admin.site.register(Userprofile,userprofile)
 
  
