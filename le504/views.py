@@ -46,6 +46,7 @@ class Wordlist(APIView):
         word = Word.objects.all()
         serializer = wordsserializer(word, many=True)
         return Response(serializer.data)
+    permission_classes = (IsAuthenticated,)
 
 
 class Worddetail(APIView): 
@@ -54,7 +55,7 @@ class Worddetail(APIView):
         serializer = wordsserializer(word, many=False)
         return Response(serializer.data)
 
-    def post(self,request,id):
+    def post(self,request):
         kalamee = request.data['kalame']
         maanie = request.data['maani']
         descriptione = request.data['description']
@@ -67,6 +68,19 @@ class Worddetail(APIView):
         serializer = wordsserializer(word, many=False)
         return Response(serializer.data)
     permission_classes = (IsAdminUser,)
+    def put(self,request,id):
+        word=Word.objects.get(id=id)
+        if request.data['kalame'] !='':
+             word.kalame = request.data['kalame']
+        if request.data['maani'] !='':
+             word.maani = request.data['maani']
+        if request.data['description'] !='':
+             word.description = request.data['description']
+        if request.data['audiofile'] !='':
+             word.audiofile = request.data['audiofile']
+        word.save()
+        serializer = wordsserializer(word, many=False)
+        return Response(serializer.data)
 
     def delete(self,request,id):
         word=Word.objects.get(id=id)
