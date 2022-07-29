@@ -50,10 +50,11 @@ class Wordlist(APIView):
 
 
 class Worddetail(APIView): 
-    def delete(self,request,id):
+    def get(self,request,id):
         word=Word.objects.get(id=id)
         serializer = wordsserializer(word, many=False)
-        return Response(serializer.data)
+        return Response(serializer.data)    
+
 
     def post(self,request):
         kalamee = request.data['kalame']
@@ -68,6 +69,7 @@ class Worddetail(APIView):
         serializer = wordsserializer(word, many=False)
         return Response(serializer.data)
     permission_classes = (IsAdminUser,)
+    
     def put(self,request,id):
         word=Word.objects.get(id=id)
         if request.data['kalame'] !='':
