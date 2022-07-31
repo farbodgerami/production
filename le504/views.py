@@ -68,7 +68,6 @@ class Worddetail(APIView):
                                 audiofile=audiofilee)
         serializer = wordsserializer(word, many=False)
         return Response(serializer.data)
-    permission_classes = (IsAdminUser,)
     
     def put(self,request,id):
         word=Word.objects.get(id=id)
@@ -89,6 +88,7 @@ class Worddetail(APIView):
         word.delete()
         return Response('word deleted')
     permission_classes = (IsAdminUser,)
+    # permission_classes = (IsAdminUser,)
 
 
 
